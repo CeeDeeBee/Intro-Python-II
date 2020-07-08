@@ -1,5 +1,6 @@
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -34,6 +35,12 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
+# Add items
+room['foyer'].items = [
+    Item("Torch", "A burning torch made of wood and cloth."),
+    Item("Rock", "Just a rock.")
+]
+
 #
 # Main
 #
@@ -56,12 +63,42 @@ playing = True
 while playing:
     print(player.current_room)
 
-    command = input("What would you like to do? ").lower()
+    command = input("What would you like to do? ").lower().split(" ")
 
-    if command == "n" or command == "s" or command == "e" or command == "w":
-        player.move(command)
-    elif command == "q":
-        print("\nThanks for playing!\n")
-        playing = False
+    if len(command) == 1:
+        command = command[0]
+        if command == "n" or command == "s" or command == "e" or command == "w":
+            player.move(command)
+        elif command == "i" or command == "inventory":
+            player.print_inventory()
+        elif command == "q":
+            print("\nThanks for playing!\n")
+            playing = False
+        else:
+            print("\nInvalid command")
+    elif len(command) == 2:
+        if command[0] == "get" or command[0] == "take" or command[0] == "drop":
+            input_item = command[1].capitalize()
+            if command[0] == "drop":
+                player_item_names = [item.name for item in player.items]
+                if input_item in player_item_names:
+                    item_index = player_item_names.index(input_item)
+                    item = player.drop_item(item_index)
+                    player.current_room.items.append(item)
+                    item.on_drop()
+                else:
+                    print(
+                        f"\nYou are not holding an item named {input_item}")
+            else:
+                room_item_names = [
+                    item.name for item in player.current_room.items]
+                if input_item in room_item_names:
+                    item_index = room_item_names.index(input_item)
+                    player.add_item(player.current_room.items.pop(item_index))
+                else:
+                    print(
+                        f"\nThere is no item named {input_item} in this room.")
+        else:
+            print("\nInvalid command")
     else:
         print("\nInvalid command")

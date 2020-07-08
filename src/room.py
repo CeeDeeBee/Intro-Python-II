@@ -5,6 +5,16 @@ class Room:
         self.name = name
         self.description = description
         self.n_to = self.s_to = self.e_to = self.w_to = None
+        self.items = []
 
     def __str__(self):
-        return f"\n{self.name}\n{self.description}\n"
+        items = ""
+        if not bool(len(self.items)):
+            items = "None"
+        else:
+            for item in self.items:
+                items += f"{item.name}, "
+            # remove last comma and space
+            items = items[:-2]
+
+        return f"\n{self.name}\n{self.description}\nItems: {items}\n"
