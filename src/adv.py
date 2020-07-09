@@ -1,6 +1,7 @@
 from room import Room
 from player import Player
-from item import Item
+from item import Item, Weapon
+from monster import Monster
 
 # Declare all the rooms
 
@@ -19,8 +20,7 @@ the distance, but there is no way across the chasm."""),
 to north. The smell of gold permeates the air."""),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
-chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+chamber! It seems to have been looted long ago... although whats that in the corner?. The only exit is to the south."""),
 }
 
 
@@ -39,6 +39,14 @@ room['treasure'].s_to = room['narrow']
 room['foyer'].items = [
     Item("Torch", "A burning torch made of wood and cloth."),
     Item("Rock", "Just a rock.")
+]
+room['treasure'].items = [
+    Weapon("Sword", "An iron sword in surprisingly good condition.", 4)
+]
+
+# Add monsters
+room['overlook'].monsters = [
+    Monster("Ogre", 25, 100)
 ]
 
 #
@@ -60,8 +68,13 @@ player = Player(room['outside'])
 # If the user enters "q", quit the game.
 playing = True
 
+print(player.current_room)
+
 while playing:
-    print(player.current_room)
+    if player.health <= 0:
+        print("\nThanks for playing!\n")
+        playing = False
+        break
 
     command = input("What would you like to do? ").lower().split(" ")
 
@@ -72,11 +85,13 @@ while playing:
             player.move(command)
         elif command == "i" or command == "inventory":
             player.print_inventory()
+        elif command == "c" or command == "check":
+            player.current_room.print_items()
         elif command == "q":
             print("\nThanks for playing!\n")
             playing = False
         else:
-            print("\nInvalid command")
+            print("\nInvalid command\n")
     # if multi word command is entered
     elif len(command) == 2:
         # if command keyword is a take or drop input
@@ -87,7 +102,13 @@ while playing:
             # if command keyword is take input
             else:
                 player.take_item(input_item)
+        elif command[0] == "a" or command[0] == "attack":
+            input_monster = command[1].capitalize()
+            player.attack(input_monster)
         else:
-            print("\nInvalid command")
+            print("\nInvalid command\n")
     else:
-        print("\nInvalid command")
+        print("\nInvalid command\n")
+
+    if not command[0] == "n" and not command[0] == "s" and not command[0] == "e" and not command[0] == "w":
+        player.current_room.monsters_attack(player)

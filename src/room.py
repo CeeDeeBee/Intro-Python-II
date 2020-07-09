@@ -6,15 +6,26 @@ class Room:
         self.description = description
         self.n_to = self.s_to = self.e_to = self.w_to = None
         self.items = []
+        self.monsters = []
 
     def __str__(self):
-        items = ""
+        text = f"\n{self.name}\n{self.description}\n"
+        if len(self.monsters) > 0:
+            for monster in self.monsters:
+                text += str(monster)
+        return text
+
+    def print_items(self):
+        items = "\n"
         if not bool(len(self.items)):
-            items = "None"
+            items += "There are no items in this room.\n"
         else:
             for item in self.items:
-                items += f"{item.name}, "
-            # remove last comma and space
-            items = items[:-2]
+                items += f"{str(item)}\n"
 
-        return f"\n{self.name}\n{self.description}\nItems: {items}\n"
+        print(items)
+
+    def monsters_attack(self, player):
+        for monster in self.monsters:
+            if monster.health > 0:
+                monster.attack(player)
