@@ -65,6 +65,7 @@ while playing:
 
     command = input("What would you like to do? ").lower().split(" ")
 
+    # if single word command is entered
     if len(command) == 1:
         command = command[0]
         if command == "n" or command == "s" or command == "e" or command == "w":
@@ -76,28 +77,16 @@ while playing:
             playing = False
         else:
             print("\nInvalid command")
+    # if multi word command is entered
     elif len(command) == 2:
+        # if command keyword is a take or drop input
         if command[0] == "get" or command[0] == "take" or command[0] == "drop":
             input_item = command[1].capitalize()
             if command[0] == "drop":
-                player_item_names = [item.name for item in player.items]
-                if input_item in player_item_names:
-                    item_index = player_item_names.index(input_item)
-                    item = player.drop_item(item_index)
-                    player.current_room.items.append(item)
-                    item.on_drop()
-                else:
-                    print(
-                        f"\nYou are not holding an item named {input_item}")
+                player.drop_item(input_item)
+            # if command keyword is take input
             else:
-                room_item_names = [
-                    item.name for item in player.current_room.items]
-                if input_item in room_item_names:
-                    item_index = room_item_names.index(input_item)
-                    player.add_item(player.current_room.items.pop(item_index))
-                else:
-                    print(
-                        f"\nThere is no item named {input_item} in this room.")
+                player.take_item(input_item)
         else:
             print("\nInvalid command")
     else:

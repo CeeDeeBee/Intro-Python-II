@@ -7,4 +7,4 @@ class Item:
         print(f"\nYou have picked up {self.name}.")
 
     def on_drop(self):
-        print(f"\nYou have dropped up {self.name}.")
+        print(f"\nYou have dropped {self.name}.")
